@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<dictionary title="LocationSimulator Terminology">
+
+    <!--- Standard Suite -->
+    <suite name="Standard Suite" code="????" description="Common classes and commands for all applications.">
+
+        <enumeration name="map type" code="Lstr" description="A transport type." inline="3">
+            <enumerator name="explore" code="Lsex" description="Explore."/>
+            <enumerator name="satellite" code="Lssa" description="Satellite."/>
+            <enumerator name="hybrid" code="Lshy" description="Hybrid."/>
+        </enumeration>
+
+        <command name="quit" code="aevtquit" description="Quit the application.">
+            <cocoa class="NSQuitCommand"/>
+        </command>
+
+        <command name="count" code="corecnte" description="Return the number of elements of a particular class within an object.">
+            <cocoa class="NSCountCommand"/>
+            <access-group identifier="*"/>
+            <direct-parameter type="specifier" requires-access="r" description="The objects to be counted."/>
+            <parameter name="each" code="kocl" type="type" optional="yes" description="The class of objects to be counted." hidden="yes">
+                <cocoa key="ObjectClass"/>
+            </parameter>
+            <result type="integer" description="The count."/>
+        </command>
+
+        <command name="delete" code="coredelo" description="Delete an object.">
+            <cocoa class="NSDeleteCommand"/>
+            <access-group identifier="*"/>
+            <direct-parameter type="specifier" description="The object(s) to delete."/>
+        </command>
+
+        <command name="duplicate" code="coreclon" description="Copy an object.">
+            <cocoa class="NSCloneCommand"/>
+            <access-group identifier="*"/>
+            <direct-parameter type="specifier" requires-access="r" description="The object(s) to copy."/>
+            <parameter name="to" code="insh" type="location specifier" description="The location for the new copy or copies." optional="yes">
+                <cocoa key="ToLocation"/>
+            </parameter>
+            <parameter name="with properties" code="prdt" type="record" description="Properties to set in the new copy or copies right away." optional="yes">
+                <cocoa key="WithProperties"/>
+            </parameter>
+        </command>
+
+        <command name="exists" code="coredoex" description="Verify that an object exists.">
+            <cocoa class="NSExistsCommand"/>
+            <access-group identifier="*"/>
+            <direct-parameter type="any" requires-access="r" description="The object(s) to check."/>
+            <result type="boolean" description="Did the object(s) exist?"/>
+        </command>
+
+        <command name="make" code="corecrel" description="Create a new object.">
+            <cocoa class="NSCreateCommand"/>
+            <access-group identifier="*"/>
+            <parameter name="new" code="kocl" type="type" description="The class of the new object.">
+                <cocoa key="ObjectClass"/>
+            </parameter>
+            <parameter name="at" code="insh" type="location specifier" optional="yes" description="The location at which to insert the object.">
+                <cocoa key="Location"/>
+            </parameter>
+            <parameter name="with data" code="data" type="any" optional="yes" description="The initial contents of the object.">
+                <cocoa key="ObjectData"/>
+            </parameter>
+            <parameter name="with properties" code="prdt" type="record" optional="yes" description="The initial values for properties of the object.">
+                <cocoa key="KeyDictionary"/>
+            </parameter>
+            <result type="specifier" description="The new object."/>
+        </command>
+
+        <command name="move" code="coremove" description="Move an object to a new location.">
+            <cocoa class="NSMoveCommand"/>
+            <access-group identifier="*"/>
+            <direct-parameter type="specifier" requires-access="r" description="The object(s) to move."/>
+            <parameter name="to" code="insh" type="location specifier" description="The new location for the object(s).">
+                <cocoa key="ToLocation"/>
+            </parameter>
+        </command>
+
+        <command name="clear device selection" code="LSclears" description="Clear the currently selected device.">
+            <direct-parameter description="The window to interact with." type="window"/>
+        </command>
+
+        <class name="application" code="capp" description="The application's top-level scripting object.">
+            <cocoa class="LSApplication"/>
+            <property name="name" code="pnam" type="text" access="r" description="The name of the application."/>
+            <property name="frontmost" code="pisf" type="boolean" access="r" description="Is this the active application?">
+                <cocoa key="isActive"/>
+            </property>
+            <property name="version" code="vers" type="text" access="r" description="The version number of the application."/>
+            <element type="window" access="r">
+                <cocoa key="orderedWindows"/>
+            </element>
+            <responds-to command="quit">
+                <cocoa method="handleQuitScriptCommand:"/>
+            </responds-to>
+
+            <element type="device" access="r">
+                <cocoa key="devices"/>
+            </element>
+
+            <!-- Dummy to allow access from applescript -->
+            <element type="gpx file" access="r" hidden="yes">
+                <cocoa key="gpxFiles"/>
+            </element>
+
+            <!-- GPX Suite -->
+            <responds-to command="load gpx">
+                <cocoa method="loadGPXFile:"/>
+            </responds-to>
+
+            <!-- Coordinate Suite -->
+            <responds-to command="distance">
+                <cocoa method="distanceBetween:"/>
+            </responds-to>
+
+            <responds-to command="is valid">
+                <cocoa method="isValid:"/>
+            </responds-to>
+
+            <responds-to command="calculate route">
+                <cocoa method="route:"/>
+            </responds-to>
+
+            <!-- Math Suite -->
+            <responds-to command="sin">
+                <cocoa method="sinOf:"/>
+            </responds-to>
+
+            <responds-to command="cos">
+                <cocoa method="cosOf:"/>
+            </responds-to>
+
+            <responds-to command="atan2">
+                <cocoa method="atanOf:"/>
+            </responds-to>
+
+            <!-- Storage Suite -->
+            <element type="storage" access="r">
+                <cocoa key="storages"/>
+            </element>
+
+            <responds-to command="open storage">
+                <cocoa method="openStorage:"/>
+            </responds-to>
+        </class>
+
+        <class name="window" code="cwin" description="A window.">
+            <cocoa class="LSWindow"/>
+            <property name="name" code="pnam" type="text" access="r" description="The title of the window.">
+                <cocoa key="title"/>
+            </property>
+            <property name="id" code="ID  " type="integer" access="r" description="The unique identifier of the window.">
+                <cocoa key="uniqueID"/>
+            </property>
+            <property name="index" code="pidx" type="integer" description="The index of the window, ordered front to back.">
+                <cocoa key="orderedIndex"/>
+            </property>
+            <property name="bounds" code="pbnd" type="rectangle" description="The bounding rectangle of the window.">
+                <cocoa key="boundsAsQDRect"/>
+            </property>
+            <property name="closeable" code="hclb" type="boolean" access="r" description="Does the window have a close button?">
+                <cocoa key="hasCloseBox"/>
+            </property>
+            <property name="miniaturizable" code="ismn" type="boolean" access="r" description="Does the window have a minimize button?">
+                <cocoa key="isMiniaturizable"/>
+            </property>
+            <property name="miniaturized" code="pmnd" type="boolean" description="Is the window minimized right now?">
+                <cocoa key="isMiniaturized"/>
+            </property>
+            <property name="resizable" code="prsz" type="boolean" access="r" description="Can the window be resized?">
+                <cocoa key="isResizable"/>
+            </property>
+            <property name="visible" code="pvis" type="boolean" description="Is the window visible right now?">
+                <cocoa key="isVisible"/>
+            </property>
+            <property name="zoomable" code="iszm" type="boolean" access="r" description="Does the window have a zoom button?">
+                <cocoa key="isZoomable"/>
+            </property>
+            <property name="zoomed" code="pzum" type="boolean" description="Is the window zoomed right now?">
+                <cocoa key="isZoomed"/>
+            </property>
+            <responds-to command="close">
+                <cocoa method="handleCloseScriptCommand:"/>
+            </responds-to>
+
+            <!-- internal value to represent mapview as element -->
+            <element type="mapview" access="r" hidden="yes">
+                <cocoa key="mapViewControllers"/>
+            </element>
+
+            <!-- Extension -->
+            <property name="map view" code="LSma" type="mapview" access="r" description="The main map view if a device is selected.">
+                <cocoa key="mapViewController"/>
+            </property>
+
+            <property name="selected device" code="LSsl" type="device" access="rw" description="The currently selected device.">
+                <cocoa key="selectedDevice"/>
+            </property>
+            <property name="speed" code="LSsp" type="real" access="rw" description="The current speed in km/h.">
+                <cocoa key="speed"/>
+            </property>
+            <property name="sidebar is collapsed" code="LSsc" type="boolean" access="rw" description="True if the sidebar is collapsed, False otherwise.">
+                <cocoa key="sidebarIsCollapsed"/>
+            </property>
+            <property name="transport type" code="LStt" type="transport type" access="rw" description="The currently selected transport type.">
+                <cocoa key="moveType"/>
+            </property>
+            <property name="map type" code="LSmt" type="map type" access="rw" description="The currently selected map type.">
+                <cocoa key="mapType"/>
+            </property>
+
+            <responds-to command="clear device selection">
+                <cocoa method="clearDeviceSelection:"/>
+            </responds-to>
+        </class>
+
+    </suite>
+
+    <!--- Device Suite -->
+    <suite name="Device Suite" code="LSDS" description="Common classes and commands to interact with iOS or Simulator devices.">
+        <command name="change location" code="LSsetloc" description="Change the location of a device.">
+            <direct-parameter description="The device to interact with." type="device"/>
+
+            <parameter name="latitude" code="Lsla" type="real" description="The latitude value.">
+                <cocoa key="latitude"/>
+            </parameter>
+            <parameter name="longitude" code="Lslo" type="real" description="The longitude value.">
+                <cocoa key="longitude"/>
+            </parameter>
+
+            <result type="boolean" description="Could the location be changed?"/>
+        </command>
+
+        <command name="reset location" code="LSresloc" description="Reset the location of a device.">
+            <direct-parameter description="The device to interact with." type="device"/>
+            <result type="boolean" description="Could the location be reset?"/>
+        </command>
+
+        <command name="pair" code="LSpairde" description="Pair a device to use it. This function requires LocationSimualtor to already have a valid DeveloperDiskImage for the device.">
+            <direct-parameter description="The device to interact with." type="device"/>
+        </command>
+
+        <class name="device" code="LSDE" description="A device" inherits="item" plural="devices">
+            <cocoa class="ASDevice"/>
+            <property name="id" code="ID  " type="text" access="r" description="The unique identifier of the device.">
+                <cocoa key="uuid"/>
+            </property>
+            <property name="name" code="pnam" type="text" access="r" description="The name of the device.">
+                <cocoa key="name"/>
+            </property>
+            <property name="productVersion" code="LSpv" type="text" access="r" description="The iOS version of the device.">
+                <cocoa key="productVersion"/>
+            </property>
+            <property name="productName" code="LSpn" type="text" access="r" description="The product version of the device.">
+                <cocoa key="productName"/>
+            </property>
+            <property name="simulator" code="LSis" type="boolean" access="r" description="Is the device a simulator device?">
+                <cocoa key="isSimulator"/>
+            </property>
+
+            <responds-to command="change location">
+                <cocoa method="changeLocation:"/>
+            </responds-to>
+
+            <responds-to command="reset location">
+                <cocoa method="resetLocation:"/>
+            </responds-to>
+
+            <responds-to command="pair">
+                <cocoa method="pair:"/>
+            </responds-to>
+        </class>
+    </suite>
+
+    <!--- Coordinate Suite -->
+    <suite name="Coordinate Suite" code="LSCS" description="Common commands to work with coordinates.">
+        <enumeration name="transport type" code="Lstr" description="A transport type." inline="3">
+            <enumerator name="walk" code="Lswa" description="Walk."/>
+            <enumerator name="cycle" code="Lscy" description="Cycle."/>
+            <enumerator name="drive" code="Lsdr" description="Drive."/>
+        </enumeration>
+
+        <command name="distance" code="LSheadbe" description="Distance between two coordinates in meters.">
+            <parameter name="from" code="Lspo" type="list of real" description="The start coordinate {lat, lon}.">
+                <cocoa key="from"/>
+            </parameter>
+            <parameter name="to" code="Lsat" type="list of real" description="The end coordinate {lat, lon}.">
+                <cocoa key="to"/>
+            </parameter>
+
+            <result type="real" description="The distance between the two coordinates in meters "/>
+        </command>
+
+        <command name="is valid" code="LSisvald" description="Check if a coordinate is valid.">
+            <parameter name="coordinate" code="Lscd" type="list of real" description="The coordinate {lat, lon}.">
+                <cocoa key="coordinate"/>
+            </parameter>
+
+            <result type="boolean" description="True if the coordinate is valid, false otehrwise."/>
+        </command>
+
+        <command name="calculate route" code="LScroute" description="Calculate the route from a source to a destination coordinate.">
+            <parameter name="from" code="Lsfc" type="list of real" description="The source coordinate {lat, lon}.">
+                <cocoa key="from"/>
+            </parameter>
+
+            <parameter name="to" code="Lstc" type="list of real" description="The destination coordinate {lat, lon}.">
+                <cocoa key="to"/>
+            </parameter>
+
+            <parameter name="transport type" code="Lstt" type="transport type" description="The transport type." optional="yes">
+                <cocoa key="transportType"/>
+            </parameter>
+
+            <result description="List of coordinates of the calculated route. A coordinate is a list of {lat, lon}.">
+                <!-- list of list of real, but AppleScript does not allow nested lists... -->
+                <type type="list of any" />
+            </result>
+        </command>
+    </suite>
+
+    <!--- GPX Suite -->
+    <suite name="GPX Suite" code="LSGS" description="Common classes and commands to interact with GPX files.">
+        <command name="load gpx" code="LSldgpxf" description="Load a GPX file.">
+            <parameter name="file" code="Lsfl" type="file" description="The gpx file.">
+                <cocoa key="file"/>
+            </parameter>
+
+            <result type="gpx file" description="The loaded gpx file."/>
+        </command>
+
+        <command name="close" code="LSclogpx" description="Close an open GPX file.">
+            <direct-parameter description="The GPX file to close." type="gpx file"/>
+        </command>
+
+        <class name="route point" code="LSRP" description="A point of a route" inherits="item" plural="route points">
+            <cocoa class="ASRoutePoint"/>
+
+            <property name="longitude" code="LSlo" type="real" access="r" description="The longitute coordinate.">
+                <cocoa key="longitude"/>
+            </property>
+
+            <property name="latitude" code="LSla" type="real" access="r" description="The latitute coordinate.">
+                <cocoa key="latitude"/>
+            </property>
+
+            <property name="coordinate" code="LScn" type="list of real" access="r" description="The coordinate of the route point.">
+                <cocoa key="coordinate"/>
+            </property>
+
+            <property name="name" code="LSpn" type="text" access="r" description="The name of the route point.">
+                <cocoa key="name"/>
+            </property>
+        </class>
+
+        <class name="route" code="LSRO" description="A route" inherits="item" plural="routes">
+            <cocoa class="ASRoute"/>
+
+            <property name="name" code="LSrn" type="text" access="r" description="The name of the route.">
+                <cocoa key="name"/>
+            </property>
+
+            <element type="route point" access="r">
+                <cocoa key="points"/>
+            </element>
+        </class>
+
+        <class name="waypoint" code="LSWP" description="A waypoint" inherits="item" plural="waypoints">
+            <cocoa class="ASWayPoint"/>
+
+            <property name="longitude" code="LSlo" type="real" access="r" description="The longitute coordinate.">
+                <cocoa key="longitude"/>
+            </property>
+
+            <property name="latitude" code="LSla" type="real" access="r" description="The latitute coordinate.">
+                <cocoa key="latitude"/>
+            </property>
+
+            <property name="name" code="LSpn" type="text" access="r" description="The name of the waypoint.">
+                <cocoa key="name"/>
+            </property>
+
+            <property name="coordinate" code="LScn" type="list of real" access="r" description="The coordinate of the waypoint.">
+                <cocoa key="coordinate"/>
+            </property>
+        </class>
+
+        <class name="track point" code="LSTP" description="A point of a track segment" inherits="item" plural="track points">
+            <cocoa class="ASTrackPoint"/>
+
+            <property name="longitude" code="LSlo" type="real" access="r" description="The longitute coordinate.">
+                <cocoa key="longitude"/>
+            </property>
+
+            <property name="latitude" code="LSla" type="real" access="r" description="The latitute coordinate.">
+                <cocoa key="latitude"/>
+            </property>
+
+            <property name="name" code="LSpn" type="text" access="r" description="The name of the track point.">
+                <cocoa key="name"/>
+            </property>
+
+            <property name="coordinate" code="LScn" type="list of real" access="r" description="The coordinate of the track point.">
+                <cocoa key="coordinate"/>
+            </property>
+        </class>
+
+        <class name="segment" code="LSSG" description="A segment of a track" inherits="item" plural="segments">
+            <cocoa class="ASTrackSegment"/>
+
+            <property name="name" code="LSsn" type="text" access="r" description="The name of the segment.">
+                <cocoa key="name"/>
+            </property>
+
+            <element type="track point" access="r">
+                <cocoa key="points"/>
+            </element>
+        </class>
+
+        <class name="track" code="LSTR" description="A track" inherits="item" plural="tracks">
+            <cocoa class="ASTrack"/>
+
+            <property name="name" code="LStn" type="text" access="r" description="The name of the track.">
+                <cocoa key="name"/>
+            </property>
+
+            <element type="segment" access="r">
+                <cocoa key="segments"/>
+            </element>
+        </class>
+
+        <class name="gpx file" code="LSGX" description="A GPX file" inherits="item" plural="gpx files">
+            <cocoa class="ASGPXFile"/>
+
+            <property name="id" code="ID  " type="text" access="r" description="The unique identifier of the gpx file." hidden="yes">
+                <cocoa key="uniqueID"/>
+            </property>
+
+            <property name="path" code="LSpa" type="file" access="r" description="The file path.">
+                <cocoa key="file"/>
+            </property>
+
+            <element type="waypoint" access="r">
+                <cocoa key="waypoints"/>
+            </element>
+
+            <element type="track" access="r">
+                <cocoa key="tracks"/>
+            </element>
+
+            <element type="route" access="r">
+                <cocoa key="routes"/>
+            </element>
+
+            <responds-to command="close">
+                <cocoa method="close:"/>
+            </responds-to>
+        </class>
+    </suite>
+
+    <!--- Math Suite -->
+    <suite name="Math Suite" code="LSMS" description="Common math functions.">
+        <command name="sin" code="LSsinfun" description="Calculates the sine of a number x.">
+            <parameter name="of" code="Lssi" type="real" description="x">
+                <cocoa key="of"/>
+            </parameter>
+
+            <result type="real" description="sin(x)"/>
+        </command>
+
+        <command name="cos" code="LScosfun" description="Calculates the cosine of a number x.">
+            <parameter name="of" code="Lsco" type="real" description="x.">
+                <cocoa key="of"/>
+            </parameter>
+
+            <result type="real" description="cos(x)"/>
+        </command>
+
+        <command name="atan2" code="LSatafun" description="Calculates the atan2 of x + i*y.">
+            <parameter name="y" code="Lsyp" type="real" description="y input.">
+                <cocoa key="y"/>
+            </parameter>
+
+            <parameter name="x" code="Lsxp" type="real" description="x input.">
+                <cocoa key="x"/>
+            </parameter>
+
+            <result type="real" description="atan2(y, x)"/>
+        </command>
+    </suite>
+
+
+    <!--- Map Suite -->
+    <suite name="Map Suite" code="LSUI" description="Common UI functions.">
+        <command name="reset location" code="LSresetl" description="Reset the current location.">
+            <direct-parameter description="The map view to interact with." type="mapview"/>
+        </command>
+
+        <command name="move in direction of heading" code="LSresetl" description="Move in the direction of heading.">
+            <direct-parameter description="The map view to interact with." type="mapview"/>
+        </command>
+
+        <command name="follow" code="LSfollow" description="Follow a predefined route.">
+            <direct-parameter description="The map view to interact with." type="mapview"/>
+
+            <parameter name="route" code="Lsfr" type="list of any" description="The route to follow as coordinate list {{lat1, lon1}, ...}.">
+                <cocoa key="route"/>
+            </parameter>
+        </command>
+
+        <command name="request location change" code="LSreqloc" description="Request a change from the user to the target location.">
+            <direct-parameter description="The map view to interact with." type="mapview"/>
+
+            <parameter name="to" code="Lsto" type="list of real" description="The target location {lat, lon}.">
+                <cocoa key="to"/>
+            </parameter>
+        </command>
+
+        <class name="mapview" code="LSMV" description="A map view." inherits="item" plural="map views">
+            <cocoa class="LSMapViewController"/>
+
+            <property name="id" code="ID  " type="integer" access="r" description="The unique identifier of the map.">
+                <cocoa key="uniqueID"/>
+            </property>
+
+            <property name="heading" code="LShe" type="real" access="rw" description="The current heading.">
+                <cocoa key="heading"/>
+            </property>
+
+            <property name="follows route" code="LSin" type="boolean" access="r" description="True if a navigation is ongoing, false otherwise.">
+                <cocoa key="isNavigating"/>
+            </property>
+
+            <property name="current location" code="LSlc" type="list of real" access="rw" description="The current location.">
+                <cocoa key="location"/>
+            </property>
+
+            <property name="shows user alert" code="LSua" type="boolean" access="r" description="True if a user alert is currently visible, false otherwise.">
+                <cocoa key="isShowingAlert"/>
+            </property>
+
+            <property name="move automatically" code="LSam" type="boolean" access="rw" description="Automatically move in the direction of heading without user interaction.">
+                <cocoa key="automove"/>
+            </property>
+
+            <property name="navigate back automatically" code="LSrr" type="boolean" access="rw" description="Automatically walk back to the start of the route.">
+                <cocoa key="autoreverseRoute"/>
+            </property>
+
+            <property name="focus automatically" code="LSaf" type="boolean" access="rw" description="Automatically focus on the current location.">
+                <cocoa key="autofocusCurrentLocation"/>
+            </property>
+
+            <responds-to command="reset location">
+                <cocoa method="resetLocation:"/>
+            </responds-to>
+
+            <responds-to command="move in direction of heading">
+                <cocoa method="move:"/>
+            </responds-to>
+
+            <responds-to command="follow">
+                <cocoa method="followRoute:"/>
+            </responds-to>
+
+            <responds-to command="request location change">
+                <cocoa method="requestLocationChange:"/>
+            </responds-to>
+        </class>
+    </suite>
+
+
+    <!--- Storage Suite -->
+    <suite name="Storage Suite" code="LSSS" description="In-memory storage you can use to share data between different scripts or multiple runs of a script.">
+        <command name="open storage" code="LSopemem" description="Open an new storage container. If a container with the given name already exists it will be reused.">
+            <parameter name="name" code="Lsmn" type="text" description="name">
+                <cocoa key="name"/>
+            </parameter>
+
+            <result type="storage" description="The opened storage container."/>
+        </command>
+
+        <command name="store" code="LSmemsto" description="Store a value in the storage container.">
+            <direct-parameter description="The storage container to interact with." type="storage"/>
+            <parameter name="key" code="Lsst" type="any" description="key">
+                <cocoa key="key"/>
+            </parameter>
+
+            <parameter name="value" code="Lsgt" type="any" description="value">
+                <cocoa key="value"/>
+            </parameter>
+
+            <result type="boolean" description="True if the value did not exist, false otherwise."/>
+        </command>
+
+        <command name="read" code="LSmemred" description="Get a value from the storage container.">
+            <direct-parameter description="The storage container to interact with." type="storage"/>
+            <parameter name="key" code="Lsgt" type="any" description="key">
+                <cocoa key="key"/>
+            </parameter>
+
+            <parameter name="default" code="Lsdf" type="any" optional="yes" description="The default value if the key is not found.">
+                <cocoa key="default"/>
+            </parameter>
+
+            <result type="any" description="The stored value."/>
+        </command>
+
+        <command name="remove" code="LSmemrem" description="Remove a value from the storage container.">
+            <direct-parameter description="The storage container to interact with." type="storage"/>
+            <parameter name="key" code="Lsrm" type="any" description="key">
+                <cocoa key="key"/>
+            </parameter>
+
+            <result type="boolean" description="True if the value was removed, false otherwise."/>
+        </command>
+
+        <command name="close" code="LSclosto" description="Close an open storage container. This closes the container for all scripts, not only the executing one. Trying to open it again will create a new container.">
+            <direct-parameter description="The storage container to close." type="storage"/>
+        </command>
+
+        <class name="storage" code="LSST" description="A in-memory storage container that holds key-value pairs." inherits="item" plural="storages">
+            <cocoa class="ASStorage"/>
+
+            <property name="name" code="pnam" type="text" access="r" description="The name of the storage.">
+                <cocoa key="name"/>
+            </property>
+
+            <responds-to command="store">
+                <cocoa method="storeData:"/>
+            </responds-to>
+
+            <responds-to command="read">
+                <cocoa method="getData:"/>
+            </responds-to>
+
+            <responds-to command="remove">
+                <cocoa method="removeData:"/>
+            </responds-to>
+
+            <responds-to command="close">
+                <cocoa method="close:"/>
+            </responds-to>
+        </class>
+    </suite>
+</dictionary>
