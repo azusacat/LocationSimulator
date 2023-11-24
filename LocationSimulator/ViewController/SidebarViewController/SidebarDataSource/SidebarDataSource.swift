@@ -18,6 +18,9 @@ class SidebarDataSource: NSObject {
 
     /// List with all currently detected simulator devices.
     public var simDevices: [SimulatorDevice] = []
+    
+    /// List the telegram locations
+    public var tgLocations: [TgLocationItem] = []
 
     /// The currently selected device.
     public var selectedDevice: Device? {
@@ -87,7 +90,21 @@ extension SidebarDataSource: NSOutlineViewDataSource {
         if index == self.realDevices.count+1 {
             return SimDeviceHeader()
         }
-        return self.simDevices[index-self.realDevices.count-2]
+        
+        if index > self.realDevices.count + 1 && index < (self.simDevices.count + self.realDevices.count + 2) {
+            return self.simDevices[index-self.realDevices.count-2]
+        }
+//        if index == (self.realDevices.count + self.simDevices.count + 2) {
+//            return TgLocationHeader()
+//        }
+        let item = TgLocation(name: "123")
+//        item.name = "asd"
+//        return item
+        
+//        tgItem.name = "41.12345, 140.12345"
+//        TgLocationItem(name)
+//        return TgLocationItem(name: "123")
+        return TgLocationHeader()//"Fake"// self.simDevices[index-self.realDevices.count-2]
     }
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
@@ -95,7 +112,7 @@ extension SidebarDataSource: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-        return 1 + self.realDevices.count + 1 + self.simDevices.count
+        return 1 + self.realDevices.count + 1 + self.simDevices.count + 2 + self.tgLocations.count
     }
 }
 

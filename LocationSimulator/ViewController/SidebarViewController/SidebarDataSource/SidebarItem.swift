@@ -20,6 +20,19 @@ protocol SidebarItem {
     var identifier: NSUserInterfaceItemIdentifier { get }
 }
 
+protocol TgLocationItem {
+    /// The TableViewCell text.
+    var name: String { get set }
+    /// The TableViewCell image.
+    var image: NSImage? { get }
+    /// True if the TableViewCell a group item, false otherwise.
+    var isGroupItem: Bool { get }
+    /// The cell identifier string.
+    var identifier: NSUserInterfaceItemIdentifier { get }
+    var long: String? { get set }
+    var lat: String? { get set }
+}
+
 /// Support the Device type as sidebar item.
 extension IOSDevice: SidebarItem {
     var image: NSImage? {
@@ -46,6 +59,46 @@ extension SimulatorDevice: SidebarItem {
 
     var identifier: NSUserInterfaceItemIdentifier {
         return NSUserInterfaceItemIdentifier(rawValue: "DeviceCell")
+    }
+}
+struct TgLocation: TgLocationItem {
+    var name: String
+    
+    var long: String?
+    
+    var lat: String?
+    
+
+    var image: NSImage? {
+        return NSImage(named: "wifi")
+    }
+
+    var isGroupItem: Bool {
+        return true
+    }
+
+    var identifier: NSUserInterfaceItemIdentifier {
+        return NSUserInterfaceItemIdentifier(rawValue: "DeviceCell")
+    }
+    
+    
+}
+/// The main Header table view cell, which contains all simulator devices.
+struct TgLocationHeader: SidebarItem {
+    var name: String {
+        return "Location"
+    }
+
+    var image: NSImage? {
+        return nil
+    }
+
+    var isGroupItem: Bool {
+        return true
+    }
+
+    var identifier: NSUserInterfaceItemIdentifier {
+        return NSUserInterfaceItemIdentifier(rawValue: "HeaderCell")
     }
 }
 

@@ -54,6 +54,7 @@ class MapView: MKMapView {
         mapPressGesture.minimumPressDuration = 0.5
         mapPressGesture.numberOfTouchesRequired = 1
         self.addGestureRecognizer(mapPressGesture)
+        self.addTelegramPin()
     }
 
     override init(frame frameRect: NSRect) {
@@ -87,6 +88,15 @@ class MapView: MKMapView {
             // Call the assigned action
             self.longPressAction?(self.currentLocationMarker?.coordinate, coordinate)
         }
+    }
+    
+    // Add Telegram Pin
+    public func addTelegramPin() {
+        let annotation = MKPointAnnotation()
+        let centerCoordinate = CLLocationCoordinate2D(latitude: 41, longitude: 29)
+        annotation.coordinate = centerCoordinate
+        annotation.title = "Telegram"
+        self.addAnnotation(annotation)
     }
 
     // MARK: - Zoom
