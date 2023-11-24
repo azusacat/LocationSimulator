@@ -25,7 +25,7 @@ public enum ASTransportType: UInt32 {
 }
 
 internal func arrayToCoordinate(_ arr: [CGFloat]) throws -> CLLocationCoordinate2D {
-    guard arr.count == 2 else {
+     guard arr.count == 2 else {
         throw ASError.InvalidCoordinate
     }
     return CLLocationCoordinate2D(latitude: arr[0], longitude: arr[1])

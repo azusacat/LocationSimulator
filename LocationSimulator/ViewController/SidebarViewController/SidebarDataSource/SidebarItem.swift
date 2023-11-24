@@ -22,15 +22,15 @@ protocol SidebarItem {
 
 protocol TgLocationItem {
     /// The TableViewCell text.
-    var name: String { get set }
+    var name: String { get }
     /// The TableViewCell image.
     var image: NSImage? { get }
     /// True if the TableViewCell a group item, false otherwise.
     var isGroupItem: Bool { get }
     /// The cell identifier string.
     var identifier: NSUserInterfaceItemIdentifier { get }
-    var long: String? { get set }
-    var lat: String? { get set }
+    var long: String { get }
+    var lat: String { get }
 }
 
 /// Support the Device type as sidebar item.
@@ -61,32 +61,57 @@ extension SimulatorDevice: SidebarItem {
         return NSUserInterfaceItemIdentifier(rawValue: "DeviceCell")
     }
 }
-struct TgLocation: TgLocationItem {
-    var name: String
-    
-    var long: String?
-    
-    var lat: String?
-    
-
+extension TgItem: SidebarItem {
     var image: NSImage? {
-        return NSImage(named: "wifi")
+        if #available(macOS 11.0, *) {
+            return NSImage(systemSymbolName: "paperplane", accessibilityDescription: "")
+        } else {
+            // Fallback on earlier versions
+            return NSImage(named: "Simulator")
+        }
     }
-
+    
     var isGroupItem: Bool {
-        return true
+        return false
     }
-
+    
     var identifier: NSUserInterfaceItemIdentifier {
         return NSUserInterfaceItemIdentifier(rawValue: "DeviceCell")
     }
     
     
+    
+}
+//struct TgLocation: TgLocationItem {
+//    var name: String
+//    
+//    var long: String?
+//    
+//    var lat: String?
+//    
+//
+//    var image: NSImage? {
+//        return NSImage(named: "wifi")
+//    }
+//
+//    var isGroupItem: Bool {
+//        return true
+//    }
+//
+//    var identifier: NSUserInterfaceItemIdentifier {
+//        return NSUserInterfaceItemIdentifier(rawValue: "DeviceCell")
+//    }
+//    
+//    
+//}
+struct TgLocationResult{
+    let status: String
+    let data: [String]
 }
 /// The main Header table view cell, which contains all simulator devices.
 struct TgLocationHeader: SidebarItem {
     var name: String {
-        return "Location"
+        return "TG Location"
     }
 
     var image: NSImage? {

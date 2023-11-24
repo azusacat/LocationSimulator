@@ -165,6 +165,7 @@
 		63FC479F2305653000BBB2E8 /* MapView+MapViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FC479E2305653000BBB2E8 /* MapView+MapViewDelegate.swift */; };
 		63FDE224258F9E3300917412 /* GPXSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDE223258F9E3300917412 /* GPXSelectionView.swift */; };
 		63FDE22D258FA42200917412 /* GPXSelectionView+NSBrowserDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FDE22C258FA42200917412 /* GPXSelectionView+NSBrowserDelegate.swift */; };
+		FF7B596F2B107F72000D8D54 /* SidebarDataSource+Telegram.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7B596E2B107F72000D8D54 /* SidebarDataSource+Telegram.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -377,6 +378,7 @@
 		63FC479E2305653000BBB2E8 /* MapView+MapViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapView+MapViewDelegate.swift"; sourceTree = "<group>"; };
 		63FDE223258F9E3300917412 /* GPXSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXSelectionView.swift; sourceTree = "<group>"; };
 		63FDE22C258FA42200917412 /* GPXSelectionView+NSBrowserDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GPXSelectionView+NSBrowserDelegate.swift"; sourceTree = "<group>"; };
+		FF7B596E2B107F72000D8D54 /* SidebarDataSource+Telegram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarDataSource+Telegram.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -887,6 +889,7 @@
 				6390AB3D2593CB9900B0CABA /* SidebarItem.swift */,
 				63888DD32592B23D00B1DFC9 /* SidebarDataSource.swift */,
 				63888DD92592B94900B1DFC9 /* SidebarDataSource+DeviceNotifications.swift */,
+				FF7B596E2B107F72000D8D54 /* SidebarDataSource+Telegram.swift */,
 			);
 			path = SidebarDataSource;
 			sourceTree = "<group>";
@@ -1381,6 +1384,7 @@
 				6311B799230C150D00AABF3E /* FileManager+SupportDirectory.swift in Sources */,
 				636FD9E02989A8F7004FBFFF /* SpeedFormatter.swift in Sources */,
 				636FD9DF2989A8F7004FBFFF /* SpeedSelectionView.swift in Sources */,
+				FF7B596F2B107F72000D8D54 /* SidebarDataSource+Telegram.swift in Sources */,
 				6304FF91298B3554002DE6CD /* OnboardPageViewController.swift in Sources */,
 				63C799FD259659740099B794 /* InfoViewController.swift in Sources */,
 				633A460322F996E1005B3BE0 /* NSView+Extension.swift in Sources */,

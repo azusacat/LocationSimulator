@@ -20,7 +20,18 @@ class SidebarDataSource: NSObject {
     public var simDevices: [SimulatorDevice] = []
     
     /// List the telegram locations
-    public var tgLocations: [TgLocationItem] = []
+    public var tgLocations: [TgItem] = []
+    public var selectedTgLocations: TgItem?
+//    public var selectedTgLocations: TgItem? {
+//        get {
+//            let numIOSDevices = self.realDevices.count
+//            let numSimDevices = self.simDevices.count
+//            let numTgLocations = self.tgLocations.count
+//            let row = (self.sidebarView?.selectedRow ?? 0)
+//            if
+//            return nil
+//        }
+//    }
 
     /// The currently selected device.
     public var selectedDevice: Device? {
@@ -94,17 +105,12 @@ extension SidebarDataSource: NSOutlineViewDataSource {
         if index > self.realDevices.count + 1 && index < (self.simDevices.count + self.realDevices.count + 2) {
             return self.simDevices[index-self.realDevices.count-2]
         }
-//        if index == (self.realDevices.count + self.simDevices.count + 2) {
-//            return TgLocationHeader()
-//        }
-        let item = TgLocation(name: "123")
-//        item.name = "asd"
-//        return item
-        
-//        tgItem.name = "41.12345, 140.12345"
-//        TgLocationItem(name)
-//        return TgLocationItem(name: "123")
-        return TgLocationHeader()//"Fake"// self.simDevices[index-self.realDevices.count-2]
+        if index == (self.realDevices.count + self.simDevices.count + 2) {
+            return TgLocationHeader()
+        }
+        let item = self.tgLocations[index-self.realDevices.count-self.simDevices.count-3] as TgItem
+//        NSLog("Item name %s", item.name)
+        return item
     }
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
@@ -112,7 +118,7 @@ extension SidebarDataSource: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-        return 1 + self.realDevices.count + 1 + self.simDevices.count + 2 + self.tgLocations.count
+        return 1 + self.realDevices.count + 1 + self.simDevices.count + 1 + self.tgLocations.count
     }
 }
 
@@ -122,7 +128,10 @@ extension SidebarDataSource: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, viewFor viewForTableColumn: NSTableColumn?, item: Any) -> NSView? {
         // Weird swift bug:
         // https://stackoverflow.com/questions/42033735/failing-cast-in-swift-from-any-to-protocol
-        guard let item = (item as AnyObject) as? SidebarItem else { return nil }
+        guard let item = (item as AnyObject) as? SidebarItem else {
+//            NSLog("nul")
+            return nil
+        }
         // Create the NSTableView cell for the outline view.
         let cell = self.sidebarView?.makeView(withIdentifier: item.identifier, owner: self) as? NSTableCellView
         cell?.textField?.stringValue = item.name
@@ -146,7 +155,19 @@ extension SidebarDataSource: NSOutlineViewDelegate {
         if let simDevice = (item as AnyObject) as? SimulatorDevice {
             return ((self.selectedDevice as? SimulatorDevice) != simDevice)
         }
+        
+//        if let tgLocation = (item as AnyObject) as? TgItem {
+//            return ((self.))
+//        }
 
+        if let tgItem = (item as AnyObject) as? TgItem {
+            self.selectedTgLocations = tgItem
+            NotificationCenter.default.post(name: Notification.Name("TGLocationChange"), object: self.sidebarView)
+            
+//            self.locationManager
+            return false
+            
+        }
         // Default, should never be the case.
         return false
     }

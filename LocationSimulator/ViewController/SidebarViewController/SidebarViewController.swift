@@ -10,7 +10,7 @@ import AppKit
 import LocationSpoofer
 import SuggestionPopup
 
-let kMinimumSidebarWidth = 150.0
+let kMinimumSidebarWidth = 250.0
 
 let kEnableSidebarSearchField = {
     if #available(OSX 11.0, *) {
@@ -29,6 +29,7 @@ class SidebarViewController: NSViewController {
 
     /// The observer when the cell selection changes.
     private var selectionObserver: NSObjectProtocol?
+    private var locationObserver: NSObjectProtocol?
 
     /// The enclosing scrollView containing the outlineView.
     private var scrollView: NSScrollView? {
@@ -66,13 +67,18 @@ class SidebarViewController: NSViewController {
         self.dataSource?.registerDeviceNotifications()
         IOSDevice.startGeneratingDeviceNotifications()
         SimulatorDevice.startGeneratingDeviceNotifications()
+        self.dataSource?.fetchTgLocationRecord()
 
+        let timer = Timer.scheduledTimer(timeInterval: 15, target: self, selector: #selector(proxyToFetchTgRecord), userInfo: nil, repeats: true)
         // Add a searchbar to the sidebar in macOS 11 and up
         if kEnableSidebarSearchField {
             self.setupSearchField()
         }
     }
 
+    @objc func proxyToFetchTgRecord() {
+        self.dataSource?.fetchTgLocationRecord()
+    }
     deinit {
         // Stop listening for new devices
         IOSDevice.stopGeneratingDeviceNotifications()
@@ -82,6 +88,10 @@ class SidebarViewController: NSViewController {
         if let observer = self.selectionObserver {
             NotificationCenter.default.removeObserver(observer)
             self.selectionObserver = nil
+        }
+        if let tgObserver = self.locationObserver {
+            NotificationCenter.default.removeObserver(tgObserver)
+            self.locationObserver = nil
         }
     }
 
@@ -156,6 +166,29 @@ class SidebarViewController: NSViewController {
     // MARK: - Selection changed
 
     private func registerOutlineViewActions() {
+        self.locationObserver = NotificationCenter.default.addObserver(forName: Notification.Name("TGLocationChange"), object: nil, queue: .main, using: { selectionDidChangeNotification in
+            NSLog("[Observer]location on change")
+            if let selectedTgLocation = self.dataSource?.selectedTgLocations {
+                NSLog("Selected name %@", selectedTgLocation.name)
+//                let long: Double = 140.229372
+//                let lat: Double = 22.426614
+//                let coord = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                var a = selectedTgLocation.name.components(separatedBy: "]")
+                if (a.count < 1) { return }
+//                a.popLast()
+                let b = a.last?.components(separatedBy: ",") ?? []
+                if (b.count != 2) { return }
+                let coord = try! arrayToCoordinate(b.map {
+                    CGFloat(($0 as NSString).doubleValue)
+                })
+                self.windowController?.mapViewController?.teleportToStartAndNavigate(route: [coord])
+//                self.windowController?.mapViewController?.requestTeleportOrNavigation(toCoordinate: coord)
+//                , additionalRoute: <#T##[CLLocationCoordinate2D]#>) requestTeleportOrNavigation(toCoordinate: coord)
+//                teleportToStartAndNavigate(route: [coord])
+                
+            }
+            
+        })
         self.selectionObserver = NotificationCenter.default.addObserver(
             forName: NSOutlineView.selectionDidChangeNotification, object: nil, queue: .main, using: { notification in
                 // Only handle the relevant outline view.
@@ -166,7 +199,11 @@ class SidebarViewController: NSViewController {
                 guard let splitViewController = self.enclosingSplitViewController as? SplitViewController else {
                     return
                 }
-
+                let numOfSim = self.dataSource?.simDevices.count ?? 0
+                let numOfReal = self.dataSource?.realDevices.count ?? 0
+                if (self.dataSource?.sidebarView?.selectedRow ?? 0 > numOfSim + numOfReal + 3) {
+                    return
+                }
                 // On macOS 11 use the line toolbar separator style for the MapViewController. Otherwise use None.
                 var drawSeparator: Bool = false
                 var viewController: Any?
