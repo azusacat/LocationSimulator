@@ -60,17 +60,13 @@ extension SidebarDataSource {
     public func removeTgLocationRecord() {
         print(self.sidebarView?.numberOfRows ?? "-")
         for (index, _) in self.tgLocations.enumerated().reversed() {
-            print("[remove]", index)
             self.tgLocations.remove(at: index)
             let newIndex = 1 + self.realDevices.count + 1 + self.simDevices.count + 1 + index
             self.sidebarView?.removeItems(at: [newIndex], inParent: nil, withAnimation: .effectFade)
         }
     }
     public func fetchTgLocationRecord() {
-        
-        NSLog("Start Fetching TG Record")
         self.fetchTgData { (dict, error) in
-            print("[data]", dict ?? "-")
             if (dict != nil) {
                 DispatchQueue.main.async {
                     self.removeTgLocationRecord()
@@ -84,8 +80,6 @@ extension SidebarDataSource {
                     }
                 }
             }
-//            NSLog("[fetchTgData]%ld", (dict?["data"] as Array ).count ?? 0)
-            
         }
 //        let devices = [
 //            "22.42087823, 114.22542759",
